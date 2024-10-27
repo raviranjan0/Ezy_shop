@@ -33,9 +33,6 @@
 # Welcome to Ezyshop 👋
 EzyShop is a user-friendly platform that connects you to your favourite local stores, offering a seamless shopping experience from the comfort of your home. Whether you're looking for groceries, household essentials, or special organic products, EzyShop brings them all together in one app. With our easy-to-use interface, you can compare prices across multiple stores, access exclusive deals, and enjoy hassle-free deliveries right to your doorstep. So, go and check my project.
 
-## 👩‍💻 Live demo 
-
-Visit https://ezyshopz.vercel.app to see the live demo!
 
 ## 🚀 Features
 - **Login/Signup with User Roles**: Seamless authentication for two user roles – **Store Manager** 🛍️ and **Shopper** 🛒. Store Managers add their store & handle product management, while Shoppers browse and purchase items effortlessly. 
