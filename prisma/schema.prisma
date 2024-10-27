@@ -1,0 +1,166 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String  @id @default(uuid()) @map("_id")
+  mobileNumber String  @unique
+  name         String?
+
+  email String? @unique
+  otp   String?
+  role  String  @default("user")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  wishlists Wishlist[]
+  cart Cart[]
+
+  //comments     Comment[] 
+
+}
+
+model Seller {
+  id String @id @default(uuid()) @map("_id")
+
+  name            String?
+  storeName       String
+  storeAddress    String
+  storeLat        Float @default(28.61)
+  storeLng        Float @default(77.23)
+  storeUPI        String
+  storeMobile     String  @unique
+  storeDescription String @default("A store")
+
+  email      String     @unique
+  otp        String?
+  role       String      @default("seller")
+  // addresses     Address[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  // orders        Order[]
+  // wishlist      Product[]
+  coverUrl   String @default("https://res.cloudinary.com/drz5akzu1/image/upload/v1729718405/mschk1pmmng6nqnlzl32.jpg")
+  billboards Billboard[] @relation("SellerToBillboard")
+  categories Category[]  @relation("SellerToCategory")
+  products   Product[]   @relation("SellerToProduct")
+}
+
+model Billboard {
+  id         String     @id @default(uuid()) @map("_id")
+  storeId    String
+  seller     Seller     @relation("SellerToBillboard", fields: [storeId], references: [id])
+  label      String
+  imageUrl   String
+  categories Category[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Category {
+  id          String    @id @default(uuid()) @map("_id")
+  storeId     String
+  seller      Seller    @relation("SellerToCategory", fields: [storeId], references: [id])
+  billboardId String
+  billboard   Billboard @relation(fields: [billboardId], references: [id])
+  products    Product[] @relation("CategoryToProduct")
+  name        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id String @id @default(uuid()) @map("_id")
+
+  storeId String
+  seller  Seller @relation("SellerToProduct", fields: [storeId], references: [id])
+
+  categoryId String
+  category   Category @relation("CategoryToProduct", fields: [categoryId], references: [id])
+
+  name        String
+  price       Int
+  description String
+  quantity    Int
+  isFeatured  Boolean @default(false)
+  isArchived  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  images Image[]
+  wishlists Wishlist[] 
+  cart Cart[]
+}
+
+model Image {
+  id String @id @default(uuid()) @map("_id")
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  url String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id                String    @id @default(uuid()) @map("_id")
+  title             String
+  image             String
+  content           String
+  metaDescription   String
+  author            String      @default("Admin")
+  label             String
+  // comments          Comment[] // Establishes relationship with comments
+  createdAt         DateTime  @default(now())
+}
+
+model Wishlist {
+  id        String @id @default(uuid()) @map("_id")
+  userId    String
+  productId String
+
+  // Relations to User and Product
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  // constraint so that combination of productId and userId is unique for a wishlist entry
+  @@unique([userId, productId])
+
+  @@index([userId])
+  @@index([productId])
+}
+
+model Cart {
+  id        String @id @default(uuid()) @map("_id")
+  userId    String
+  productId String
+
+  // Relations to User and Product
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  // constraint so that combination of productId and userId is unique for a wishlist entry
+  @@unique([userId, productId])
+
+  @@index([userId])
+  @@index([productId])
+}
