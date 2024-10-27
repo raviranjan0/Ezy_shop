@@ -224,7 +224,7 @@ const Footer = () => {
           }}
           className="text-customTeal dark:text-Green hover:text-gray-200 hover:underline pl-1 "
         >
-          Azfar Alam
+          Raviranjan Singh & Priyanshi
         </Link>
       </div>
     </div>
